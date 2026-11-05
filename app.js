@@ -1,4 +1,4 @@
-import { parseVersion, resolveModule } from "./match.js";
+import { parseVersion, resolveModule, matchesQuery } from "./match.js";
 
 const LABELS = {
   "compatible": "Compatible",
@@ -7,6 +7,8 @@ const LABELS = {
   "unknown": "Unknown",
   "no-releases": "No releases",
 };
+
+const HIDDEN_TOPICS = ["terraform", "azurerm", "azure"];
 
 const $ = (id) => document.getElementById(id);
 
@@ -37,11 +39,16 @@ function copyButton(text) {
   return b;
 }
 
-function row(name, mod, version) {
-  const r = resolveModule(mod.tags, version);
+function row(name, mod, r) {
   const tr = document.createElement("tr");
   const tdName = el("td");
   tdName.append(link(mod.url, name));
+  const shown = (mod.topics || []).filter((t) => !HIDDEN_TOPICS.includes(t));
+  if (shown.length) {
+    const box = el("div", undefined, "topics");
+    for (const t of shown) box.append(el("span", t, "topic"));
+    tdName.append(box);
+  }
   let status = LABELS[r.status];
   if (r.newerUnknown) status += " (newer releases with unknown support exist)";
   const tdRelease = el("td");
@@ -60,14 +67,32 @@ function row(name, mod, version) {
 
 function render(catalog) {
   const version = $("version").value;
+  const query = $("query").value.trim();
   const valid = parseVersion(version) !== null;
   $("hint").hidden = valid;
   $("results").hidden = !valid;
+  const status = $("status");
+  status.hidden = true;
   const rows = $("rows");
   rows.replaceChildren();
   if (!valid) return;
+  let n = 0;
   for (const name of Object.keys(catalog.modules).sort()) {
-    rows.append(row(name, catalog.modules[name], version));
+    const mod = catalog.modules[name];
+    const r = resolveModule(mod.tags, version);
+    if (!matchesQuery(name, mod.topics || [], query)) continue;
+    if (!query && r.status !== "compatible") continue;
+    rows.append(row(name, mod, r));
+    n++;
+  }
+  status.hidden = false;
+  if (query) {
+    status.textContent = n ? "" : `No modules match '${query}'`;
+    status.hidden = n > 0;
+  } else if (n) {
+    status.textContent = `Showing ${n} compatible modules. Search to include modules without a compatible release.`;
+  } else {
+    status.textContent = `No compatible modules for azurerm ${version}`;
   }
 }
 
@@ -90,6 +115,7 @@ async function main() {
   $("version").value = catalog.azurerm_versions[0] || "";
   $("footer").textContent = `Data last changed: ${catalog.updated_at} · Owner: ${catalog.owner}`;
   $("version").addEventListener("input", () => render(catalog));
+  $("query").addEventListener("input", () => render(catalog));
   render(catalog);
 }
 

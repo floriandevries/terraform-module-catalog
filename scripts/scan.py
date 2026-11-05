@@ -86,14 +86,15 @@ class GitHub:
             m = NEXT_RE.search(link)
             url = m.group(1) if m else None
 
-    def search_repos(self, owner: str) -> list[str]:
+    def search_repos(self, owner: str) -> dict[str, list[str]]:
         url = "%s/search/repositories?q=user:%s+topic:terraform+topic:azurerm&per_page=100" % (API, owner)
-        names = []
+        found = {}
         for page in self._json_pages(url):
             if page.get("incomplete_results"):
                 raise urllib.error.URLError("incomplete search results")
-            names.extend(i["name"] for i in page["items"])
-        return sorted(names)
+            for i in page["items"]:
+                found[i["name"]] = sorted(i.get("topics") or [])
+        return {name: found[name] for name in sorted(found)}
 
     def tags(self, owner: str, repo: str) -> list[tuple[str, str]]:
         url = "%s/repos/%s/%s/tags?per_page=100" % (API, owner, repo)
@@ -121,7 +122,7 @@ class GitHub:
 def scan(owner: str, previous: dict | None, gh, now: str) -> dict:
     old_modules = (previous or {}).get("modules", {})
     modules = {}
-    for repo in gh.search_repos(owner):
+    for repo, topics in gh.search_repos(owner).items():
         old_tags = old_modules.get(repo, {}).get("tags", {})
         tags = {}
         for name, sha in gh.tags(owner, repo):
@@ -136,7 +137,7 @@ def scan(owner: str, previous: dict | None, gh, now: str) -> dict:
                 if constraint is not None:
                     break
             tags[name] = {"sha": sha, "constraint": constraint}
-        modules[repo] = {"url": "https://github.com/%s/%s" % (owner, repo), "tags": tags}
+        modules[repo] = {"url": "https://github.com/%s/%s" % (owner, repo), "tags": tags, "topics": sorted(topics)}
     versions = gh.azurerm_versions()
     changed = (
         previous is None

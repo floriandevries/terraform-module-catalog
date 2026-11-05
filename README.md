@@ -11,6 +11,12 @@ Test modules: `terraform-azurerm-fjdev-res-resource-group`, `terraform-azurerm-f
 - The scanner reads the azurerm `version` constraint from the root `.tf` files at each tag.
 - A release is shown as compatible only if its parsed constraint allows the selected azurerm version. A missing or unparseable constraint is never compatible.
 
+## Search
+
+- Search matches every word against the module name and its GitHub topics.
+- With an empty search, only compatible modules are shown. A search shows every match, including modules without a compatible release.
+- Topics come from the scanner's existing repo search; no extra API calls.
+
 ## Run tests locally
 
 ```

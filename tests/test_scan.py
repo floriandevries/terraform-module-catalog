@@ -27,13 +27,14 @@ def tf_with(constraint):
 
 
 class FakeGitHub:
-    def __init__(self, repos, versions=None):
+    def __init__(self, repos, versions=None, topics=None):
         self.repos = repos
+        self.topics = topics or {}
         self.versions = versions or ["5.0.0", "4.1.0"]
         self.calls = 0
 
     def search_repos(self, owner):
-        return sorted(self.repos)
+        return {r: list(self.topics.get(r, [])) for r in sorted(self.repos)}
 
     def tags(self, owner, repo):
         return [(n, v["sha"]) for n, v in self.repos[repo].items()]
@@ -127,6 +128,22 @@ class ScanTests(unittest.TestCase):
         self.assertEqual(res["modules"]["a"]["url"], "https://github.com/floriandevries/a")
         self.assertEqual(res["updated_at"], self.NOW)
 
+    def test_topics_stored_sorted(self):
+        fake = make_fake()
+        fake.topics["a"] = ["resource", "base"]
+        res = scan.scan("floriandevries", None, fake, self.NOW)
+        self.assertEqual(res["modules"]["a"]["topics"], ["base", "resource"])
+        self.assertEqual(res["modules"]["b"]["topics"], [])
+
+    def test_topic_change_updates_updated_at(self):
+        fake = make_fake()
+        fake.topics["a"] = ["base", "resource"]
+        first = scan.scan("floriandevries", None, fake, "t1")
+        fake.topics["a"] = ["base", "database"]
+        second = scan.scan("floriandevries", first, fake, "t2")
+        self.assertEqual(second["updated_at"], "t2")
+        self.assertEqual(second["modules"]["a"]["topics"], ["base", "database"])
+
     def test_missing_constraint_is_null(self):
         fake = FakeGitHub({"a": {"v1.0.0": {"sha": "s1", "tf": ['resource "x" "y" {}']}}})
         res = scan.scan("o", None, fake, self.NOW)
@@ -177,11 +194,16 @@ class SearchTests(unittest.TestCase):
             with self.assertRaises(urllib.error.URLError):
                 gh.search_repos("o")
 
-    def test_complete_results_return_sorted_names(self):
-        pages = [{"incomplete_results": False, "items": [{"name": "b"}, {"name": "a"}]}]
+    def test_complete_results_return_sorted_names_with_topics(self):
+        pages = [{"incomplete_results": False, "items": [
+            {"name": "b"},
+            {"name": "a", "topics": ["resource", "base"]},
+        ]}]
         gh = scan.GitHub("t")
         with mock.patch.object(gh, "_json_pages", return_value=iter(pages)):
-            self.assertEqual(gh.search_repos("o"), ["a", "b"])
+            result = gh.search_repos("o")
+        self.assertEqual(result, {"a": ["base", "resource"], "b": []})
+        self.assertEqual(list(result), ["a", "b"])
 
 
 class CliTests(unittest.TestCase):

@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { parseVersion, parseConstraint, satisfies, resolveModule } from "../match.js";
+import { parseVersion, parseConstraint, satisfies, resolveModule, matchesQuery } from "../match.js";
 
 test("parseVersion pads and strips v", () => {
   assert.deepEqual(parseVersion("5.12.0"), [5, 12, 0]);
@@ -90,4 +90,19 @@ test("other statuses", () => {
 test("newer release without constraint sets newerUnknown", () => {
   const t = { "v4.0.0": { sha: "a", constraint: ">= 4.0, < 6.0" }, "v4.1.0": { sha: "b", constraint: null } };
   assert.deepEqual(resolveModule(t, "5.12.0"), { status: "compatible", tag: "v4.0.0", constraint: ">= 4.0, < 6.0", newerUnknown: true });
+});
+
+test("matchesQuery", () => {
+  const mssql = ["azurerm", "database", "mssql-managed-instance", "resource", "terraform"];
+  assert.equal(matchesQuery("terraform-azurerm-fjdev-res-mssql-managed-instance", mssql, "database"), true);
+  assert.equal(matchesQuery("pc-cc-terraform-azurerm-key-vault", ["key-vault"], "key vault"), true);
+  assert.equal(matchesQuery("x", ["key-vault"], "KEY"), true);
+  assert.equal(matchesQuery("x", ["key-vault"], "key network"), false);
+  assert.equal(matchesQuery("terraform-azurerm-fjdev-res-resource-group", [], "fjdev-res-res"), true);
+  assert.equal(matchesQuery("x", ["azurerm"], "azurerm"), true);
+  assert.equal(matchesQuery("x", [], ""), true);
+  assert.equal(matchesQuery("x", [], "   "), true);
+  assert.equal(matchesQuery("x", undefined, "x"), true);
+  assert.equal(matchesQuery("x", undefined, "vault"), false);
+  assert.equal(matchesQuery("x", ["c"], "c++ ( ."), false);
 });

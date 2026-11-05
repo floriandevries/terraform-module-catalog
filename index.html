@@ -11,8 +11,12 @@ body{background:var(--bg);color:var(--fg);font:16px/1.5 system-ui,sans-serif;mar
 h1{font-size:1.5rem;margin:0 0 16px}
 label{display:block;font-weight:600;margin-bottom:4px}
 input{font:inherit;padding:6px 8px;width:100%;max-width:16rem;box-sizing:border-box;background:var(--bg);color:var(--fg);border:1px solid var(--border);border-radius:6px}
+.fields{display:flex;flex-wrap:wrap;gap:16px}
+.fields>div{flex:1 1 14rem;max-width:16rem}
+.topics{display:flex;flex-wrap:wrap;gap:4px;margin-top:4px}
+.topic{font-size:.75rem;color:var(--muted);background:var(--head);border:1px solid var(--border);border-radius:999px;padding:0 8px}
 a{color:var(--link)}
-#hint,#error{color:var(--muted);margin:16px 0}
+#hint,#error,#status{color:var(--muted);margin:16px 0}
 #error{color:var(--bad)}
 .scroll{overflow-x:auto;margin-top:16px}
 table{border-collapse:collapse;width:100%}
@@ -28,10 +32,15 @@ footer{color:var(--muted);font-size:.85rem;margin-top:24px}
 </head>
 <body>
 <h1>Terraform module catalog</h1>
-<label for="version">azurerm version</label>
+<div class="fields">
+<div><label for="version">azurerm version</label>
 <input id="version" list="versions" autocomplete="off">
-<datalist id="versions"></datalist>
+<datalist id="versions"></datalist></div>
+<div><label for="query">Search modules</label>
+<input id="query" type="search" autocomplete="off"></div>
+</div>
 <p id="hint" hidden>Enter an azurerm version like 5.12.0</p>
+<p id="status" hidden></p>
 <p id="error" hidden>Could not load catalog.json</p>
 <div class="scroll" id="results" hidden>
 <table>

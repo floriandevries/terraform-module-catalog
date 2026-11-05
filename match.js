@@ -49,6 +49,12 @@ export function satisfies(version, constraint) {
   return cs.every((c) => ok(v, c));
 }
 
+export function matchesQuery(name, topics, query) {
+  const words = String(query).toLowerCase().split(/\s+/).filter(Boolean);
+  const haystacks = [String(name).toLowerCase(), ...(topics || []).map((t) => String(t).toLowerCase())];
+  return words.every((w) => haystacks.some((h) => h.includes(w)));
+}
+
 export function resolveModule(tags, version) {
   const sorted = Object.entries(tags)
     .map(([tag, { constraint }]) => ({ tag, constraint, v: parseVersion(tag) }))
