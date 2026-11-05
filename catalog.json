@@ -430,6 +430,13 @@
           "sha": "a94810ab3c345f291bc72a04ec7f05b6a4acff1d"
         }
       },
+      "topics": [
+        "azurerm",
+        "logic-app",
+        "logic-app-standard",
+        "resource",
+        "terraform"
+      ],
       "url": "https://github.com/floriandevries/terraform-azurerm-fjdev-res-logic-app-standard"
     },
     "terraform-azurerm-fjdev-res-mssql-managed-instance": {
@@ -443,6 +450,13 @@
           "sha": "2cdba9ef6d81ebd275662351e3bdf4c758ac9a8b"
         }
       },
+      "topics": [
+        "azurerm",
+        "database",
+        "mssql-managed-instance",
+        "resource",
+        "terraform"
+      ],
       "url": "https://github.com/floriandevries/terraform-azurerm-fjdev-res-mssql-managed-instance"
     },
     "terraform-azurerm-fjdev-res-resource-group": {
@@ -472,9 +486,16 @@
           "sha": "a610b17681d2e4e52d5e92a52cc316b853053bd4"
         }
       },
+      "topics": [
+        "azurerm",
+        "base",
+        "resource",
+        "resource-group",
+        "terraform"
+      ],
       "url": "https://github.com/floriandevries/terraform-azurerm-fjdev-res-resource-group"
     }
   },
   "owner": "floriandevries",
-  "updated_at": "2026-11-05T10:19:53Z"
+  "updated_at": "2026-11-05T10:38:11Z"
 }
