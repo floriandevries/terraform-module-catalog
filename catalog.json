@@ -1,0 +1,70 @@
+{
+  "owner": "floriandevries",
+  "updated_at": "2026-11-05T03:00:00Z",
+  "azurerm_versions": [
+    "5.12.0",
+    "5.11.0",
+    "4.50.0"
+  ],
+  "modules": {
+    "terraform-azurerm-fjdev-res-resource-group": {
+      "url": "https://github.com/floriandevries/terraform-azurerm-fjdev-res-resource-group",
+      "tags": {
+        "v0.0.1": {
+          "sha": "sha0",
+          "constraint": null
+        },
+        "v1.0.0": {
+          "sha": "sha10",
+          "constraint": ">= 4.0, < 5.0"
+        },
+        "v1.0.1": {
+          "sha": "sha11",
+          "constraint": ">= 4.0, < 5.0"
+        },
+        "v1.0.2": {
+          "sha": "sha12",
+          "constraint": ">= 4.0, < 5.0"
+        },
+        "v1.1.0": {
+          "sha": "sha13",
+          "constraint": ">= 4.0, < 5.0"
+        },
+        "v1.2.0": {
+          "sha": "sha15",
+          "constraint": ">= 4.0, < 6.0"
+        }
+      }
+    },
+    "terraform-azurerm-fjdev-res-logic-app-standard": {
+      "url": "https://github.com/floriandevries/terraform-azurerm-fjdev-res-logic-app-standard",
+      "tags": {
+        "v1.0.0": {
+          "sha": "sha20",
+          "constraint": ">= 4.0, < 5.0"
+        },
+        "v1.0.1": {
+          "sha": "sha21",
+          "constraint": ">= 4.0, < 5.0"
+        },
+        "v1.0.2": {
+          "sha": "sha22",
+          "constraint": ">= 4.0, < 5.0"
+        }
+      }
+    },
+    "terraform-azurerm-fjdev-res-mssql-managed-instance": {
+      "url": "https://github.com/floriandevries/terraform-azurerm-fjdev-res-mssql-managed-instance",
+      "tags": {
+        "v1.0.0": {
+          "sha": "sha30",
+          "constraint": ">= 4.0, < 5.0"
+        },
+        "v1.1.0": {
+          "sha": "sha31",
+          "constraint": ">= 4.0, < 5.0"
+        }
+      }
+    }
+  }
+}

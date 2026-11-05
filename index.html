@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Terraform module catalog</title>
+<style>
+:root{--bg:#fff;--fg:#1b1f24;--muted:#57606a;--border:#d0d7de;--link:#0969da;--head:#f6f8fa;--ok:#1a7f37;--bad:#cf222e;--warn:#9a6700}
+@media (prefers-color-scheme: dark){:root{--bg:#0d1117;--fg:#e6edf3;--muted:#9198a1;--border:#30363d;--link:#58a6ff;--head:#161b22;--ok:#3fb950;--bad:#f85149;--warn:#d29922}}
+body{background:var(--bg);color:var(--fg);font:16px/1.5 system-ui,sans-serif;margin:0;padding:16px;max-width:1100px;margin-inline:auto}
+h1{font-size:1.5rem;margin:0 0 16px}
+label{display:block;font-weight:600;margin-bottom:4px}
+input{font:inherit;padding:6px 8px;width:100%;max-width:16rem;box-sizing:border-box;background:var(--bg);color:var(--fg);border:1px solid var(--border);border-radius:6px}
+a{color:var(--link)}
+#hint,#error{color:var(--muted);margin:16px 0}
+#error{color:var(--bad)}
+.scroll{overflow-x:auto;margin-top:16px}
+table{border-collapse:collapse;width:100%}
+th,td{text-align:left;padding:8px;border-bottom:1px solid var(--border);vertical-align:top}
+th{background:var(--head);white-space:nowrap}
+code{font-family:ui-monospace,monospace;font-size:.85em;word-break:break-all}
+button{font:inherit;margin-left:8px;padding:2px 8px;background:var(--head);color:var(--fg);border:1px solid var(--border);border-radius:6px;cursor:pointer}
+.compatible{color:var(--ok)}
+.no-compatible,.unknown{color:var(--bad)}
+.none-declared,.no-releases{color:var(--warn)}
+footer{color:var(--muted);font-size:.85rem;margin-top:24px}
+</style>
+</head>
+<body>
+<h1>Terraform module catalog</h1>
+<label for="version">azurerm version</label>
+<input id="version" list="versions" autocomplete="off">
+<datalist id="versions"></datalist>
+<p id="hint" hidden>Enter an azurerm version like 5.12.0</p>
+<p id="error" hidden>Could not load catalog.json</p>
+<div class="scroll" id="results" hidden>
+<table>
+<thead><tr><th>Module</th><th>Status</th><th>Release</th><th>azurerm constraint</th><th>Source</th></tr></thead>
+<tbody id="rows"></tbody>
+</table>
+</div>
+<footer id="footer"></footer>
+<script type="module" src="app.js"></script>
+</body>
+</html>
